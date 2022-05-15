@@ -4,23 +4,44 @@
 
 
 .data
-discos:	.word 	3	# Valor arbitrario
+texto1: .asciiz "Digite um numero: "
+texto2: .asciiz "Deseja testar de novo? (0-nao, 1-sim): "
 
 .text
-.globl MAIN
 
+	addu 	$t0, $zero, 1
 MAIN: 	
-    la $a0, discos # carrega o valor de discos em a0
-	lw $a0, 0($a0)
-	la $s0,$zero # zera o s0
-	lw $s0, 0($s0) 
-	la $s1, $sp # carrega o valor do stack pointer em s1 
-	lw $s1, 0($s1)
+	li 	$v0,  4
+    	la 	$a0,  texto1 	# imprime o texto
+    	syscall
+    	
+    	li 	$v0,  5         # Le o numero
+    	syscall
+    
+	move 	$a0, $v0	# Salva o input em $a0
+	move	$s0, $zero  	# Zera o $s0
+	lw 	$s1, 0($sp)	# carrega o valor do stack pointer em $s1
+	
+	#aqui tem que chamar o programa
+	
+	li 	$v0,  4
+    	la 	$a0,  texto2 	# imprime o texto
+    	syscall
+    	
+    	li 	$v0,  5         # Le o numero
+    	syscall
+    	move 	$t0, $v0	# Bota o input em $t0
+    	bne	$t0, 0, MAIN	# Se o usuario digitou 0, termina o programa
+	
+END:	# Saida do programa
+	li $v0, 10 	        # Fim do programa
+   	syscall
+   	
 SIZE:
-    addiu $s0,$s0,1 # s0 serve como um contador para saber o size
-	addiu $s1,$s1,4 # s1 aumenta seu valor em ´4´ para cada disco 
-	beq $s0,$a0,SIZEEND # se o contador e a0 forem iguais, sai dessa área do size, ao final desse processo, s1 será do tamanho de uma pilha
-    bne $s0,$a0,SIZE # caso contrario, repete o processo
+    	addiu 	$s0,$s0,1 # s0 serve como um contador para saber o size
+	addiu 	$s1,$s1,4 # s1 aumenta seu valor em ´4´ para cada disco 
+	beq 	$s0,$a0,SIZEEND # se o contador e a0 forem iguais, sai dessa área do size, ao final desse processo, s1 será do tamanho de uma pilha
+    	bne 	$s0,$a0,SIZE # caso contrario, repete o processo
 
 SIZEEND:
 	sw	$ra, 0($sp)	# bota o endereco de retorno do SO na pilha
@@ -29,10 +50,6 @@ SIZEEND:
 	# Sub-rotina recursiva pra resolver as torres
 HANOI: 	
 
-	jr $ra
+	jr 	$ra
 	
-	# Fim do programa
-END:	li	$v0,10		# Sai do programa
-	syscall			
-
-
+	
