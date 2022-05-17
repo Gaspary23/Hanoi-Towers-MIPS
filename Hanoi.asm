@@ -51,7 +51,7 @@ SIZEEND:
 	jal		HANOI
 
 HANOI:	
-and $s8,$s8,$zero # zera o ultimo aro movimentado 
+and $t2,$t2,$zero # zera o ultimo aro movimentado 
 and $s2,$s2,$zero # zera o contador
 j MOVAROS
 jr		$ra
@@ -62,30 +62,30 @@ and $s4,$s4,$zero # salva o valor do aro no topo do segundo pino em $s4 (TODO)
 and $s5,$s5,$zero # salva o valor do aro no topo do terceiro pino em $s5 (TODO)
 j Check1
 addiu $s2,$s2,1 # aumenta contador de movimentos
-bne $s2,(total de aros), MOV AROS # conta o numero total de movimentos
+#bne $s2,(total de aros), MOV AROS # conta o numero total de movimentos
 # escrever algo que verifica se todos os aros estão no pino 3 (se o maior topo dessa pliha é um)
 j END
 
 
 Check1:
-ble $s3,$s4, 2 Check # caso 2 seja maior que 1, passa prioridade pra ele
-ble $s3,$s5, 3 Check # caso 3 seja maior que 1, passa prioridade pra ele
+ble $s3,$s4, Check2 # caso 2 seja maior que 1, passa prioridade pra ele
+ble $s3,$s5, Check3 # caso 3 seja maior que 1, passa prioridade pra ele
 addiu $s6,$s6,$s3 # nesse caso, o aro 1 é o maior e é salvo em $s6
 addiu $t4,$t4,$t1 # salva o endereço do topo do primeiro pino em $t4
 addiu $s7,$s7,j # salva o endereço de j em $s7
 j verifica # pula para verifica
 
 Check2:
-ble $s4,$s5, 3 Check # caso 3 seja maior que 2, passa prioridade pra ele
-ble $s4,$s3, 1 Check # caso 3 seja maior que 1, passa prioridade pra ele
+ble $s4,$s5, Check3 # caso 3 seja maior que 2, passa prioridade pra ele
+ble $s4,$s3, Check1 # caso 3 seja maior que 1, passa prioridade pra ele
 addiu $s6,$s6,$s4 # nesse caso, o aro 2 é o maior e é salvo em $s6
 addiu $t4,$t4,$t2 # salva o endereço do topo do segundo pino em $t4
 addiu $s7,$s7,j # salva o endereço de j em $s7
 j verifica # pula para verifica
 
 Check3:
-ble $s5,$s3, 1 Check # caso 3 seja maior que 1, passa prioridade pra ele
-ble $s5,$s4, 2 Check # caso 3 seja maior que 2, passa prioridade pra ele
+ble $s5,$s3, Check1 # caso 3 seja maior que 1, passa prioridade pra ele
+ble $s5,$s4, Check2 # caso 3 seja maior que 2, passa prioridade pra ele
 addiu $s6,$s6,$s5 # nesse caso, o aro 3 é o maior e é salvo em $s6
 addiu $t4,$t4,$t3 # salva o endereço do topo do terceiro pino em $t4
 addiu $s7,$s7,j # salva o endereço de j em $s7
