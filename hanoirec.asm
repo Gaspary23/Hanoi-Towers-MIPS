@@ -9,15 +9,13 @@ texto2: .asciiz "Numero de movimentos: "
 texto3: .asciiz "\n\nDeseja testar de novo? (0-nao, outro numero-sim): "
 cont:	.word	0
 
-Move:
-    .asciiz      "\nMove disk from "
-To:
-    .ascii      " to "
-
-
 .text
+.globl MAIN
 
 MAIN:
+
+	move 	$v1, $zero	# Zera o contador de movimentos
+
 	# Texto1
 	li	$v0, 4
 	la	$a0, texto1		# Pergunta o num de aros desejados
@@ -59,24 +57,10 @@ MAIN:
 # Algoritmo de hanoi 
 
 HANOI:
-	addi 	$t0, $a0, 0		# temp save $a0
+    	addi $v1,$v1,1			# Incrementa o numero de movimentos
     	addi 	$t1, $zero, 1
     	bne 	$a0, $t1, else
     	
-    	li $v0, 4			# print move
-    la $a0, Move
-    syscall
-    li $v0, 1 			# print start_peg
-    move $a0, $a1
-    syscall
-    li $v0, 4			# print to
-    la $a0, To
-    syscall
-    li $v0, 1 			# print end_peg
-    move $a0, $a3
-    syscall
-    	
-    	addi 	$a0, $t0, 0		# restore $a0
     	jr 	$ra
     
 else:
@@ -107,21 +91,7 @@ else:
     	lw $a0, 0($sp)		#load a0(num_of_disks)
    
     #move a disk from start_peg to end_peg
-    	addi $t0, $a0, 0		# temp save $a0
     	addi $t1, $zero, 1
-    	li $v0, 4			# print move
-    	la $a0, Move
-    	syscall
-    	li $v0, 1 			# print start_peg
-    	move $a0, $a1
-    	syscall
-    	li $v0, 4			# print to
-    	la $a0, To
-    	syscall
-    	li $v0, 1 			# print end_peg
-    	move $a0, $a3
-    	syscall
-    	addi $a0, $t0, 0		# restore $a0
     
     #hanoi_towers(num_of_disks-1, extra_peg, end_peg, start_peg)  
     	#set args for subsequent recursive call
@@ -140,4 +110,3 @@ else:
     #return
     	add $v0, $zero, $t5
     	jr $ra    
-   	
