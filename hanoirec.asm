@@ -57,38 +57,33 @@ MAIN:
 # Algoritmo de hanoi 
 
 HANOI:
-    	addi $v1,$v1,1			# Incrementa o numero de movimentos
-    	addi 	$t1, $zero, 1
-    	bne 	$a0, $t1, else
-    	
-    	jr 	$ra
+    	addi 	$v1, $v1, 1		# Incrementa o numero de movimentos
+    	bne 	$a0, 1, ELSE		# Se tiver mais de um disco, pula para o else
+    	jr 	$ra			# Se soh tiver um disco, retorna
     
-else:
-    	# Aloca espaco na pilha
+ELSE:
+    	# Aloca espaco e bota os pinos na pilha
     	addi 	$sp, $sp, -20
-    
-    #save to stack
-    	sw 	$ra, 16($sp)
-    	sw 	$a2, 12($sp)		#store a2(extra_peg)
-    	sw 	$a3, 8($sp)		#store a3(end_peg)
-    	sw 	$a1, 4($sp)		#store a1(start_peg)
-	sw 	$a0, 0($sp)		#store a0(num_of_disks)
+    	sw 	$ra, 16($sp)		# Guarda o endereco de retorno de $ra
+    	sw 	$a2, 12($sp)		# Guarda o pino extra
+    	sw 	$a3, 8($sp)		# Guarda o pino destino
+    	sw 	$a1, 4($sp)		# Guarda o pino fonte
+	sw 	$a0, 0($sp)		# Guarda o numero de discos
 	    
-    #hanoi_towers(num_of_disks-1, start_peg, extra_peg, end_peg)    
-    	#set args for subsequent recursive call
-    		addi $t3, $a2, 0		#copy var into temp
-    		addi $a2, $a3, 0		#extra_peg = end_peg
-    		addi $a3, $t3, 0		#end_peg = extra_peg
-    		addi $a0, $a0, -1		#num of disk--   		
-    	#recursive call
-    		jal HANOI   
+   	# han_move_tower (disk, source, dest, spare):  
+    	# Movimenta os discos e chama HANOI de novo
+    	addi 	$t3, $a2, 0		#
+    	addi 	$a2, $a3, 0		# Troca o disco do extra com o do destino
+    	addi 	$a3, $t3, 0	 	# 
+    	addi 	$a0, $a0, -1		# Decrementa o numero de discos 		
+    	jal 	HANOI   		# Chamada recursiva
     	
-    #load off stack
-    	lw $ra, 16($sp)
-    	lw $a2, 12($sp)		#load a2(extra_peg)
-    	lw $a3, 8($sp)		#load a3(end_peg)
-    	lw $a1, 4($sp)		#load a1(start_peg)
-    	lw $a0, 0($sp)		#load a0(num_of_disks)
+      	# Pega o que esta na pilha
+    	lw 	$ra, 16($sp)		# Carrega o endereco de retorno
+    	lw 	$a2, 12($sp)		# Carrega o pino extra 
+    	lw 	$a3, 8($sp)		# Carrega o pino destino
+    	lw 	$a1, 4($sp)		# Carrega o pino fonte
+    	lw 	$a0, 0($sp)		# Carrega o numero de discos
    
     #move a disk from start_peg to end_peg
     	addi $t1, $zero, 1
@@ -104,9 +99,9 @@ else:
     	#load params off stack
     		lw $ra, 16($sp)
     		
-    #clear stack
+    	# Limpa a pilha
     	addi $sp, $sp, 20
 
-    #return
-    	add $v0, $zero, $t5
+    	# Retorna 
+    	move $v0, $zero
     	jr $ra    
