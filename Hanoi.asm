@@ -121,21 +121,21 @@ Verifica3:
 
 
 Coloca1:
-    addiu   $t5, $t5,4 
+    addiu   $t5, $t5,4 # incrementa o valor do ponteiro da pilha 1
 	add 	$t1,$s6,$zero  # salva no topo o aro recem colocado 
 	add	    $t4,$s6,$zero  # salva no ultimo aro o aro recem movido
 	add     $s6,$zero,$zero # zera a auxiliar de maior valor
 	j 	    $s7 # retorna para $s7
 
 Coloca2:
-    addiu   $t6, $t6,4
+    addiu   $t6, $t6,4 # incrementa o valor do ponteiro da pilha 2
 	add	    $t2,$s6,$zero  # salva no topo o aro recem colocado
 	add		$t4,$s6,$zero  # salva no ultimo aro o aro recem movido
 	add		$s6,$zero,$zero  # zera a auxiliar de maior valor
 	j 		$s7 # retorna para $s7
 
 Coloca3:
-    addiu   $t7, $t7,4
+    addiu   $t7, $t7,4 # incrementa o valor do ponteiro da pilha 3
 	add 	$t3,$s6,$zero  # salva no topo o aro recem colocado
 	add 	$t4,$s6,$zero  # salva no ultimo aro o aro recem movido
 	add		$s6,$zero,$zero # zera a auxiliar de maior valor
