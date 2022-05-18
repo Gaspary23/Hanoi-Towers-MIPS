@@ -4,17 +4,22 @@
 
 
 .data
-texto1: .asciiz "\nDigite um numero: "
-texto2: .asciiz "Numero de movimentos: "
+texto0: .asciiz "\nTorres de Hanoi"
+texto1: .asciiz "\nDigite o numero de discos: "
+texto2: .asciiz "Numero de movimentos para resolver a torre: "
 texto3: .asciiz "\n\nDeseja testar de novo? (0-nao, outro numero-sim): "
 cont:	.word	0
 
 .text
 .globl MAIN
 
+	# Texto0
+	li	$v0, 4
+	la	$a0, texto0	# Imprime o texto
+	syscall
+	
 MAIN:
-
-	move 	$v1, $zero	# Zera o contador de movimentos
+	move 	$v1, $zero	# Zera o contador de movimentos para nao influenciar multiplas execucoes
 
 	# Texto1
 	li	$v0, 4
@@ -70,7 +75,7 @@ ELSE:
     	sw 	$a1, 4($sp)		# Guarda o pino fonte
 	sw 	$a0, 0($sp)		# Guarda o numero de discos
 	    
-   	# han_move_tower (disk, source, dest, spare):  
+   	# han_move_tower(disk - 1, source, spare, dest): 
     	# Movimenta os discos e chama HANOI de novo
     	addi 	$t3, $a2, 0		#
     	addi 	$a2, $a3, 0		# Troca o disco do extra com o do destino
@@ -85,22 +90,18 @@ ELSE:
     	lw 	$a1, 4($sp)		# Carrega o pino fonte
     	lw 	$a0, 0($sp)		# Carrega o numero de discos
    
-    #move a disk from start_peg to end_peg
-    	addi $t1, $zero, 1
+    	addi $t1, $zero, 1		#  Move um disco da fonte para o destino
     
-    #hanoi_towers(num_of_disks-1, extra_peg, end_peg, start_peg)  
-    	#set args for subsequent recursive call
-    		addi $t3, $a2, 0		#copy var into temp
-    		addi $a2, $a1, 0		#extra_peg = start_peg
-    		addi $a1, $t3, 0		#start_peg = extra_peg
-    		addi $a0, $a0, -1		#num of disk--  		
-    	#recursive call
-    		jal HANOI
-    	#load params off stack
-    		lw $ra, 16($sp)
-    		
-    	# Limpa a pilha
-    	addi $sp, $sp, 20
+    	# han_move_tower(disk - 1, spare, dest, source):
+    	# Movimenta os discos e chama HANOI de novo
+    	addi 	$t3, $a2, 0		# 
+    	addi 	$a2, $a1, 0		# Troca o disco do extra com o do destino
+    	addi 	$a1, $t3, 0		# 
+    	addi 	$a0, $a0, -1		# Decrementa o numero de discos  
+    	jal 	HANOI			# Chamada recursiva
+    	
+    	lw 	$ra, 16($sp)		# Bota o endereco de retorno no $ra
+    	addi 	$sp, $sp, 20		# Limpa a pilha
 
     	# Retorna 
     	move $v0, $zero
